@@ -161,3 +161,29 @@ print(f"260 kpc: {M260kpc:.2e}")
 # 
 # How does this compare to estimates of the mass assuming the Isothermal Sphere model at 260 kpc (from your answer above)
 
+#Potential from a Hernquist Profile: phi = -GM/(r+a)
+# Then vesc^2 = 2GM/(r+a)
+# So M = (r+a)(vesc^2)/2G
+def MassFromVesc(vesc, r, a, ):
+    '''
+    This function determines the total mass needed for a given escape speed assuming
+    a Hernquist Profile for the Dark Matter Halo,
+    M = (r+a)(vesc^2)/2G
+    Params:
+        vesc: (Astropy Quantity) Escape Velocity at the given radius in km/s
+        r: (Astropy Quantity) Distance from galactic center in kpc
+        a: (Astropy Quantity) Hernquist scale length in kpc
+    Returns:
+        M: (Astropy Quantity) Total Mass within r in Msun
+    '''
+    GravConst = const.G.to(u.kpc**3/(u.Gyr**2)/u.Msun) # G in desired units
+    vesckpcGyr = vesc.to(u.kpc/u.Gyr) # Converting vesc to proper units for G
+    M = vesckpcGyr**2/2/GravConst*(r+a) # Required Mass to fit a Hernquist profile
+    return M
+
+Leo1v = 196*u.km/u.s # Leo 1 speed (Sohn+2013)
+a = 30*u.kpc #Scale Radius for the Hernquist Halo
+r = 260*u.kpc #Galactocentric distance of Leo 1
+MLeo1 = MassFromVesc(Leo1v, r, a)
+print(f"Hernquist Mass: {MLeo1:.2e}")
+print(f"IsoSphere/Mleo1 = {M260kpc / MLeo1}")
