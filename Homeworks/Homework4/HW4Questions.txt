@@ -1,0 +1,16 @@
+1)
+MW:
+COM Position: [-2.066  2.947 -1.453] kpc
+COM Velocity: [ 0.939  6.314 -1.351] km / s
+M31:
+COM Position: [-377.658  611.43  -284.637] kpc
+COM Velocity: [ 72.832 -72.136  49.011] km / s
+M33:
+COM Position: [-476.22   491.44  -412.402] kpc
+COM Velocity: [ 44.422 101.784 142.231] km / s
+2) Separation in Position: 769.1 kpc
+ Separation in Velocity: 117.726 km / s
+3) Separation in Position: 201.087 kpc
+ Separation in Velocity: 199.362 km / s
+4) This iterative process is important to use so we can eliminate runaway stars
+that are ejected from the system that would mess up the averaging process

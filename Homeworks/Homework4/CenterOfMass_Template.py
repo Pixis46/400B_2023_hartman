@@ -272,9 +272,28 @@ if __name__ == '__main__' :
     # below gives you an example of calling the class's functions
     # MW:   store the position and velocity COM
     MW_COM_p = MW_COM.COM_P(0.1)
-    print(MW_COM_p)
     MW_COM_v = MW_COM.COM_V(MW_COM_p[0], MW_COM_p[1], MW_COM_p[2])
-    print(MW_COM_v)
-
+    
     # now write your own code to answer questions
+    M31_COM = CenterOfMass("M31_000.txt", 2)
+    M31_COM_p = M31_COM.COM_P(0.1)
+    M31_COM_v = M31_COM.COM_V(M31_COM_p[0], M31_COM_p[1], M31_COM_p[2])
+    
+    M33_COM = CenterOfMass("M33_000.txt", 2)
+    M33_COM_p = M33_COM.COM_P(0.1)
+    M33_COM_v = M33_COM.COM_V(M33_COM_p[0], M33_COM_p[1], M33_COM_p[2])
 
+    M33vsM31Pos = np.around(np.sqrt(np.sum([i.value**2 for i in (M31_COM_p - M33_COM_p)])), 3)*u.kpc
+    M33vM31v = np.around(np.sqrt(np.sum([i.value**2 for i in (M31_COM_v - M33_COM_v)])), 3)*u.km/u.s
+
+    M31vMWPos = np.around(np.sqrt(np.sum([i.value**2 for i in (M31_COM_p - MW_COM_p)])), 3)*u.kpc
+    M31vMWv = np.around(np.sqrt(np.sum([i.value**2 for i in (M31_COM_v - MW_COM_v)])), 3)*u.km/u.s
+
+    print(f"1)\nMW:\nCOM Position: {MW_COM_p}\nCOM Velocity: {MW_COM_v}")
+    print(f"M31:\nCOM Position: {M31_COM_p}\nCOM Velocity: {M31_COM_v}")
+    print(f"M33:\nCOM Position: {M33_COM_p}\nCOM Velocity: {M33_COM_v}")
+    print(f"2) Separation in Position: {M31vMWPos}\n Separation in Velocity: {M31vMWv}")
+    print(f"3) Separation in Position: {M33vsM31Pos}\n Separation in Velocity: {M33vM31v}")
+    print("4) This iterative process is important to use so we can eliminate runaway" +
+          " stars\nthat are ejected from the system that would mess up the averaging" +
+          " process")
