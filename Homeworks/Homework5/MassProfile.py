@@ -181,8 +181,7 @@ class MassProfile:
         return np.sqrt(Grav*M/r)
 
 
-if __name__ == "__main__":
-    test_r = np.arange(0.1, 30, step=0.1)
+def massPlots(test_r):
     # MW
     MW = MassProfile("MW", 0)
     MWhaloProfile = MW.MassEnclosed(1, test_r)
@@ -204,7 +203,7 @@ if __name__ == "__main__":
 
     # # Plotting
     fig, ax = plt.subplots(1, 3, sharey=True, figsize = (14, 6))
-    # # MW
+    # MW
     ax[0].semilogy(test_r, MWtotProfile, color="k", label="Total")
     ax[0].semilogy(test_r, MWhaloProfile, linestyle="dotted", color="magenta", label="Halo")
     ax[0].semilogy(test_r, MWdiskProfile, linestyle="--", color="blue", label="Disk")
@@ -230,5 +229,61 @@ if __name__ == "__main__":
     fig.suptitle("Mass Profiles", size=18)
     ax[2].legend(loc="lower right")
     plt.show()
+
+def velocityPlots(test_r):
+    fig, ax = plt.subplots(1, 3, sharey=True, figsize = (14, 6))
+    # MW
+    MW = MassProfile("MW", 0)
+    MWhaloProfile = MW.CircularVelocity(1, test_r)
+    MWdiskProfile = MW.CircularVelocity(2, test_r)
+    MWBulgeProfile = MW.CircularVelocity(3, test_r)
+    MWtotProfile = MW.CircularVelocityTotal(test_r)
+    # M31
+    M31 = MassProfile("M31", 0)
+    M31haloProfile = M31.CircularVelocity(1, test_r)
+    M31diskProfile = M31.CircularVelocity(2, test_r)
+    M31BulgeProfile = M31.CircularVelocity(3, test_r)
+    M31totProfile = M31.CircularVelocityTotal(test_r)
+    # M33
+    M33 = MassProfile("M33", 0)
+    M33haloProfile = M33.CircularVelocity(1, test_r)
+    M33diskProfile = M33.CircularVelocity(2, test_r)
+    M33BulgeProfile = M33.CircularVelocity(3, test_r)
+    M33totProfile = M33.CircularVelocityTotal(test_r)
+    # MW
+    ax[0].semilogy(test_r, MWtotProfile, color="k", label="Total")
+    ax[0].semilogy(test_r, MWhaloProfile, linestyle="dotted", color="magenta", label="Halo")
+    ax[0].semilogy(test_r, MWdiskProfile, linestyle="--", color="blue", label="Disk")
+    ax[0].semilogy(test_r, MWBulgeProfile, linestyle="dashdot", color="cyan", label="Bulge")
+    # M31
+    ax[1].semilogy(test_r, M31totProfile, color="k", label="Total")
+    ax[1].semilogy(test_r, M31haloProfile, linestyle="dotted", color="magenta", label="Halo")
+    ax[1].semilogy(test_r, M31diskProfile, linestyle="--", color="blue", label="Disk")
+    ax[1].semilogy(test_r, M31BulgeProfile, linestyle="dashdot", color="cyan", label="Bulge")
+    # M33
+    ax[2].semilogy(test_r, M33totProfile, color="k", label="Total")
+    ax[2].semilogy(test_r, M33haloProfile, linestyle="dotted", color="magenta", label="Halo")
+    ax[2].semilogy(test_r, M33diskProfile, linestyle="--", color="blue", label="Disk")
+    ax[2].semilogy(test_r, M33BulgeProfile, linestyle="dashdot", color="cyan", label="Bulge")
+    # Plot labels
+    ax[0].set_xlabel("r (kpc)")
+    ax[1].set_xlabel("r (kpc)")
+    ax[2].set_xlabel("r (kpc)")
+    ax[0].set_ylabel(r"$M_{enclosed}$ ($M_{\odot}$)")
+    ax[0].text(0.6, 0.93, "Milky Way", transform=ax[0].transAxes, size=14)
+    ax[1].text(0.8, 0.93, "M31", transform=ax[1].transAxes, size=14)
+    ax[2].text(0.8, 0.93, "M33", transform=ax[2].transAxes, size=14)
+    fig.suptitle("Rotation Curves", size=18)
+    ax[2].legend(loc="lower right")
+    plt.show()
+
+
+    return
+
+if __name__ == "__main__":
+    test_r = np.arange(0.1, 30, step=0.1)
+    #massPlots(test_r)
+    velocityPlots(test_r)
+    
     
 
