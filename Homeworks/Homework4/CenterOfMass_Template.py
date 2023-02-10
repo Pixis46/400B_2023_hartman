@@ -137,6 +137,7 @@ class CenterOfMass:
 
         # find the max 3D distance of all particles from the guessed COM                                               
         # will re-start at half that radius (reduced radius)                                                           
+        if len(r_new) == 0: return None
         r_max = max(r_new)/2.0
         
         # pick an initial value for the change in COM position                                                      

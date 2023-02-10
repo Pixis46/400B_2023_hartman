@@ -136,7 +136,7 @@ class CenterOfMass:
         r_new = np.sqrt(x_new**2 + y_new**2 + z_new**2)
 
         # find the max 3D distance of all particles from the guessed COM                                               
-        # will re-start at half that radius (reduced radius)                                                           
+        # will re-start at half that radius (reduced radius)
         r_max = max(r_new)/2.0
         
         # pick an initial value for the change in COM position                                                      

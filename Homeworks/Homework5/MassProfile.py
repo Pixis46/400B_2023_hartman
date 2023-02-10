@@ -3,6 +3,7 @@ import numpy as np
 from ReadFile import Read
 from CenterOfMass_Template import CenterOfMass
 from astropy.constants import G
+import matplotlib.pyplot as plt
 
 class MassProfile:
     def __init__(self, galaxy, snap):
@@ -40,35 +41,36 @@ class MassProfile:
                     The total mass of particles of the given type within
                     the corresponding radii in solar masses. If there
                     is only one radius given, a single quantity is
-                    returned
-
+                    returned. Returns 0 or an array of 0s if there are
+                    no particles of the given type in the snapshot.
         '''
+        # Check the type of r and make it an array
+        # Check if the prtclType has prtcls in the galaxy
+        r_vals = []
+        prtclIndex = np.where(self.data["type"] == prtclType)
+        try:
+            r_len = len(r) # Check for array
+            r_vals = r
+            if len(prtclIndex[0]) == 0:
+                # Return an array of 0s
+                return np.zeros(len(r))
+        except:
+            r_vals.append(r) # Make the float an array
+            r_vals = np.array(r_vals)
+            if len(prtclIndex)[0] == 0:
+                # Return a float like what was entered
+                return 0.
         COM = CenterOfMass(self.filename, prtclType)
         COMPos = COM.COM_P(0.1)
         
         # get prtcls of the correct type
-        typeIndex = np.where(self.data["type"] == prtclType)
+        typeIndex = np.where(self.data["type"] == prtclType)[0]
         xType = self.x[typeIndex]
         yType = self.y[typeIndex]
         zType = self.z[typeIndex]
         mType = self.m[typeIndex]
         rType = np.sqrt((xType - COMPos[0])**2 + (yType - COMPos[1])**2 + (zType - COMPos[2])**2)
-        # Check the type of r
-        r_vals = []
-        try:
-            r_len = len(r)
-            r_vals = r
-            if len(typeIndex) == 0:
-                # Return an array of zeros with the same length as
-                # r if there are no particles of the given type
-                return np.array([0 for i in range(len(r))])
-        except:
-            r_vals.append(r)
-            if len(typeIndex) == 0:
-                # Return 0 if there are no prtcls of the
-                # given type
-                return 0
-        
+        # Get masses
         masses = []
         for dist in r_vals:
             insideIndex = np.where(rType.value < dist)
@@ -183,6 +185,53 @@ class MassProfile:
 
 
 if __name__ == "__main__":
+    test_r = np.arange(0.1, 25, step=0.05)
+    # MW
     MW = MassProfile("MW", 0)
-    test_r = np.arange(0.25, 30.5, step=1.5)
-    print(MW.CircularVelocityTotal(test_r))
+    MWhaloProfile = MW.MassEnclosed(1, test_r)
+    MWdiskProfile = MW.MassEnclosed(2, test_r)
+    MWBulgeProfile = MW.MassEnclosed(3, test_r)
+    MWtotProfile = MW.MassEnclosedTotal(test_r)
+    # M31
+    M31 = MassProfile("M31", 0)
+    M31haloProfile = M31.MassEnclosed(1, test_r)
+    M31diskProfile = M31.MassEnclosed(2, test_r)
+    M31BulgeProfile = M31.MassEnclosed(3, test_r)
+    M31totProfile = M31.MassEnclosedTotal(test_r)
+    # M33
+    M33 = MassProfile("M33", 0)
+    M33haloProfile = M33.MassEnclosed(1, test_r)
+    M33diskProfile = M33.MassEnclosed(2, test_r)
+    M33BulgeProfile = M33.MassEnclosed(3, test_r)
+    M33totProfile = M33.MassEnclosedTotal(test_r)
+
+    # # Plotting
+    fig, ax = plt.subplots(1, 3, sharey=True, figsize = (14, 6))
+    # # MW
+    ax[0].semilogy(test_r, MWtotProfile, color="k", label="Total")
+    ax[0].semilogy(test_r, MWhaloProfile, linestyle="dotted", color="magenta", label="Halo")
+    ax[0].semilogy(test_r, MWdiskProfile, linestyle="--", color="blue", label="Disk")
+    ax[0].semilogy(test_r, MWBulgeProfile, linestyle="dashdot", color="cyan", label="Bulge")
+    # M31
+    ax[1].semilogy(test_r, M31totProfile, color="k", label="Total")
+    ax[1].semilogy(test_r, M31haloProfile, linestyle="dotted", color="magenta", label="Halo")
+    ax[1].semilogy(test_r, M31diskProfile, linestyle="--", color="blue", label="Disk")
+    ax[1].semilogy(test_r, M31BulgeProfile, linestyle="dashdot", color="cyan", label="Bulge")
+    # M33
+    ax[2].semilogy(test_r, M33totProfile, color="k", label="Total")
+    ax[2].semilogy(test_r, M33haloProfile, linestyle="dotted", color="magenta", label="Halo")
+    ax[2].semilogy(test_r, M33diskProfile, linestyle="--", color="blue", label="Disk")
+    ax[2].semilogy(test_r, M33BulgeProfile, linestyle="dashdot", color="cyan", label="Bulge")
+    # Plot labels
+    ax[0].set_xlabel("r (kpc)")
+    ax[1].set_xlabel("r (kpc)")
+    ax[2].set_xlabel("r (kpc)")
+    ax[0].set_ylabel(r"$M_{enclosed}$ ($M_{\odot}$)")
+    ax[0].text(0.1, 0.9, "Milky Way", transform=ax[0].transAxes, size=14)
+    ax[1].text(0.1, 0.9, "M31", transform=ax[1].transAxes, size=14)
+    ax[2].text(0.1, 0.9, "M33", transform=ax[2].transAxes, size=14)
+    fig.suptitle("Mass Profiles", size=18)
+    ax[2].legend(loc="lower right")
+    plt.show()
+    
+
