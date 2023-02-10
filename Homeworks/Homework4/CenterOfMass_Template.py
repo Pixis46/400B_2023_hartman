@@ -14,8 +14,7 @@ import numpy as np
 import astropy.units as u
 import astropy.table as tbl
 
-from ReadFile import Read
-
+from Homeworks.Homework2.ReadFile import Read
 
 
 

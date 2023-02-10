@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 import numpy as np
-from ReadFile import Read
+from Homeworks.Homework2.ReadFile import Read
 import astropy.units as u
 
 def ComponentMass(filename, prtclType):
