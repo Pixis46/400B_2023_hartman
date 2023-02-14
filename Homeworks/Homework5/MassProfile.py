@@ -122,10 +122,10 @@ class MassProfile:
                        in Solar Masses.
         '''
         M = (Mhalo*(r**2))/((a+r)**2)# Hernquist M
-        density = lambda r: (M*a)/(2*np.pi*r*((r+a)**3)) #Hernquist Density
-        integration = quad(density, 0.000001, r)
-        return integration[0]*u.Msun
-
+        # density = lambda r: (M*a)/(2*np.pi*r*((r+a)**3)) #Hernquist Density
+        # integration = quad(density, 0.000001, r)
+        # return integration[0]*u.Msun
+        return M*u.Msun
     
     def HernquistVCirc(self, r, a, Mhalo):# TODO
         '''
@@ -190,9 +190,9 @@ class MassProfile:
 
 def massPlots(test_r):
     #Hernquist Scale Heights
-    MWa = 6
-    M31a = 6
-    M33a = 5
+    MWa = 63
+    M31a = 60
+    M33a = 30
 
     # MW
     MW = MassProfile("MW", 0)
@@ -202,7 +202,8 @@ def massPlots(test_r):
     MWtotProfile = MW.MassEnclosedTotal(test_r)
     # popt, pcov = curve_fit(lambda r, a: MW.HernquistMass(r, a, MWhaloProfile[-1].value).value, test_r, MWtotProfile)
     # MWa = popt[0]
-    MWHernquist = np.array([MW.HernquistMass(radius, MWa, MWhaloProfile[-1].value).value for radius in test_r])*u.Msun
+    MWdarkMatterIndex = np.where(MW.data["type"] == 1)[0]
+    MWHernquist = np.array([MW.HernquistMass(radius, MWa, np.sum(MW.data["m"][MWdarkMatterIndex])*1e10).value for radius in test_r])*u.Msun
     # M31
     M31 = MassProfile("M31", 0)
     M31haloProfile = M31.MassEnclosed(1, test_r)
@@ -211,8 +212,8 @@ def massPlots(test_r):
     M31totProfile = M31.MassEnclosedTotal(test_r)
     # popt, pcov = curve_fit(lambda r, a: M31.HernquistMass(r, a, M31haloProfile[-1].value).value, test_r, M31totProfile)
     # M31a = popt[0]
-    M31Hernquist = np.array([M31.HernquistMass(radius, M31a, M31haloProfile[-1].value).value for radius in test_r])*u.Msun
-    # M33
+    M31darkMatterIndex = np.where(M31.data["type"] == 1)[0]
+    M31Hernquist = np.array([MW.HernquistMass(radius, M31a, np.sum(M31.data["m"][M31darkMatterIndex])*1e10).value for radius in test_r])*u.Msun    # M33
     M33 = MassProfile("M33", 0)
     M33haloProfile = M33.MassEnclosed(1, test_r)
     M33diskProfile = M33.MassEnclosed(2, test_r)
@@ -220,8 +221,8 @@ def massPlots(test_r):
     M33totProfile = M33.MassEnclosedTotal(test_r)
     # popt, pcov = curve_fit(lambda r, a: M33.HernquistMass(r, a, M33haloProfile[-1].value).value, test_r, M31totProfile)
     # M33a = popt[0]
-    M33Hernquist = np.array([M33.HernquistMass(radius, M33a, M33haloProfile[-1].value).value for radius in test_r])*u.Msun
-    # # Plotting
+    M33darkMatterIndex = np.where(M33.data["type"] == 1)[0]
+    M33Hernquist = np.array([M33.HernquistMass(radius, M33a, np.sum(M33.data["m"][M33darkMatterIndex])*1e10).value for radius in test_r])*u.Msun    # # Plotting
     fig, ax = plt.subplots(1, 3, sharey=True, figsize = (14, 6))
     # MW
     ax[0].semilogy(test_r, MWtotProfile, color="k", label="Total")
