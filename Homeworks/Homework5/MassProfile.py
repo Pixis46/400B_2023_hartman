@@ -227,19 +227,19 @@ def massPlots(test_r):
     ax[0].semilogy(test_r, MWtotProfile, color="k", label="Total")
     ax[0].semilogy(test_r, MWhaloProfile, linestyle="dotted", color="magenta", label="Halo")
     ax[0].semilogy(test_r, MWdiskProfile, linestyle="--", color="blue", label="Disk")
-    ax[0].semilogy(test_r, MWBulgeProfile, linestyle="dashdot", color="cyan", label="Bulge")
+    ax[0].semilogy(test_r, MWBulgeProfile, linestyle="-.", color="cyan", label="Bulge")
     ax[0].semilogy(test_r, MWHernquist, linestyle=(5, (10, 3)), color="green", label="Hernquist")
     # M31
     ax[1].semilogy(test_r, M31totProfile, color="k", label="Total")
     ax[1].semilogy(test_r, M31haloProfile, linestyle="dotted", color="magenta", label="Halo")
     ax[1].semilogy(test_r, M31diskProfile, linestyle="--", color="blue", label="Disk")
-    ax[1].semilogy(test_r, M31BulgeProfile, linestyle="dashdot", color="cyan", label="Bulge")
+    ax[1].semilogy(test_r, M31BulgeProfile, linestyle="-.", color="cyan", label="Bulge")
     ax[1].semilogy(test_r, M31Hernquist, linestyle=(5, (10, 3)), color="green", label="Hernquist")
     # M33
     ax[2].semilogy(test_r, M33totProfile, color="k", label="Total")
     ax[2].semilogy(test_r, M33haloProfile, linestyle="dotted", color="magenta", label="Halo")
     ax[2].semilogy(test_r, M33diskProfile, linestyle="--", color="blue", label="Disk")
-    ax[2].semilogy(test_r, M33BulgeProfile, linestyle="dashdot", color="cyan", label="Bulge")
+    ax[2].semilogy(test_r, M33BulgeProfile, linestyle="-.", color="cyan", label="Bulge")
     ax[2].semilogy(test_r, M33Hernquist, linestyle=(5, (10, 3)), color="green", label="Hernquist")
     # Plot labels
     ax[0].set_xlabel("r (kpc)")
