@@ -4,6 +4,9 @@ from ReadFile import Read
 from CenterOfMass_Template import CenterOfMass
 from astropy.constants import G
 import matplotlib.pyplot as plt
+from scipy.integrate import quad
+from scipy.optimize import curve_fit
+
 
 class MassProfile:
     def __init__(self, galaxy, snap):
@@ -108,7 +111,7 @@ class MassProfile:
         of the dark matter halo
 
         Parameters:
-            r: (float or array of floats) The radius to compute the enclosed
+            r: (float) The radius to compute the enclosed
                Mass at.
             a: (float) The scale height for the Hernquist profile
             Mhalo: (float) The mass of the dark matter halo of the galaxy
@@ -118,7 +121,11 @@ class MassProfile:
                        the total enclosed mass at the given radii
                        in Solar Masses.
         '''
-        return
+        M = (Mhalo*(r**2))/((a+r)**2)# Hernquist M
+        density = lambda r: (M*a)/(2*np.pi*r*((r+a)**3)) #Hernquist Density
+        integration = quad(density, 0.000001, r)
+        return integration[0]*u.Msun
+
     
     def HernquistVCirc(self, r, a, Mhalo):# TODO
         '''
@@ -182,25 +189,38 @@ class MassProfile:
 
 
 def massPlots(test_r):
+    #Hernquist Scale Heights
+    MWa = 6
+    M31a = 6
+    M33a = 5
+
     # MW
     MW = MassProfile("MW", 0)
     MWhaloProfile = MW.MassEnclosed(1, test_r)
     MWdiskProfile = MW.MassEnclosed(2, test_r)
     MWBulgeProfile = MW.MassEnclosed(3, test_r)
     MWtotProfile = MW.MassEnclosedTotal(test_r)
+    # popt, pcov = curve_fit(lambda r, a: MW.HernquistMass(r, a, MWhaloProfile[-1].value).value, test_r, MWtotProfile)
+    # MWa = popt[0]
+    MWHernquist = np.array([MW.HernquistMass(radius, MWa, MWhaloProfile[-1].value).value for radius in test_r])*u.Msun
     # M31
     M31 = MassProfile("M31", 0)
     M31haloProfile = M31.MassEnclosed(1, test_r)
     M31diskProfile = M31.MassEnclosed(2, test_r)
     M31BulgeProfile = M31.MassEnclosed(3, test_r)
     M31totProfile = M31.MassEnclosedTotal(test_r)
+    # popt, pcov = curve_fit(lambda r, a: M31.HernquistMass(r, a, M31haloProfile[-1].value).value, test_r, M31totProfile)
+    # M31a = popt[0]
+    M31Hernquist = np.array([M31.HernquistMass(radius, M31a, M31haloProfile[-1].value).value for radius in test_r])*u.Msun
     # M33
     M33 = MassProfile("M33", 0)
     M33haloProfile = M33.MassEnclosed(1, test_r)
     M33diskProfile = M33.MassEnclosed(2, test_r)
     M33BulgeProfile = M33.MassEnclosed(3, test_r)
     M33totProfile = M33.MassEnclosedTotal(test_r)
-
+    # popt, pcov = curve_fit(lambda r, a: M33.HernquistMass(r, a, M33haloProfile[-1].value).value, test_r, M31totProfile)
+    # M33a = popt[0]
+    M33Hernquist = np.array([M33.HernquistMass(radius, M33a, M33haloProfile[-1].value).value for radius in test_r])*u.Msun
     # # Plotting
     fig, ax = plt.subplots(1, 3, sharey=True, figsize = (14, 6))
     # MW
@@ -208,24 +228,30 @@ def massPlots(test_r):
     ax[0].semilogy(test_r, MWhaloProfile, linestyle="dotted", color="magenta", label="Halo")
     ax[0].semilogy(test_r, MWdiskProfile, linestyle="--", color="blue", label="Disk")
     ax[0].semilogy(test_r, MWBulgeProfile, linestyle="dashdot", color="cyan", label="Bulge")
+    ax[0].semilogy(test_r, MWHernquist, linestyle=(5, (10, 3)), color="green", label="Hernquist")
     # M31
     ax[1].semilogy(test_r, M31totProfile, color="k", label="Total")
     ax[1].semilogy(test_r, M31haloProfile, linestyle="dotted", color="magenta", label="Halo")
     ax[1].semilogy(test_r, M31diskProfile, linestyle="--", color="blue", label="Disk")
     ax[1].semilogy(test_r, M31BulgeProfile, linestyle="dashdot", color="cyan", label="Bulge")
+    ax[1].semilogy(test_r, M31Hernquist, linestyle=(5, (10, 3)), color="green", label="Hernquist")
     # M33
     ax[2].semilogy(test_r, M33totProfile, color="k", label="Total")
     ax[2].semilogy(test_r, M33haloProfile, linestyle="dotted", color="magenta", label="Halo")
     ax[2].semilogy(test_r, M33diskProfile, linestyle="--", color="blue", label="Disk")
     ax[2].semilogy(test_r, M33BulgeProfile, linestyle="dashdot", color="cyan", label="Bulge")
+    ax[2].semilogy(test_r, M33Hernquist, linestyle=(5, (10, 3)), color="green", label="Hernquist")
     # Plot labels
     ax[0].set_xlabel("r (kpc)")
     ax[1].set_xlabel("r (kpc)")
     ax[2].set_xlabel("r (kpc)")
     ax[0].set_ylabel(r"$M_{enclosed}$ ($M_{\odot}$)")
-    ax[0].text(0.1, 0.9, "Milky Way", transform=ax[0].transAxes, size=14)
-    ax[1].text(0.1, 0.9, "M31", transform=ax[1].transAxes, size=14)
-    ax[2].text(0.1, 0.9, "M33", transform=ax[2].transAxes, size=14)
+    ax[0].text(0.1, 0.95, "Milky Way", transform=ax[0].transAxes, size=13)
+    ax[0].text(0.1, 0.9, f"a={MWa}", transform=ax[0].transAxes, size=11)
+    ax[1].text(0.1, 0.95, "M31", transform=ax[1].transAxes, size=13)
+    ax[1].text(0.1, 0.9, f"a={M31a}", transform=ax[1].transAxes, size=11)
+    ax[2].text(0.1, 0.95, "M33", transform=ax[2].transAxes, size=13)
+    ax[2].text(0.1, 0.9, f"a={M33a}", transform=ax[2].transAxes, size=11)
     fig.suptitle("Mass Profiles", size=18)
     ax[2].legend(loc="lower right")
     plt.show()
@@ -282,8 +308,8 @@ def velocityPlots(test_r):
 
 if __name__ == "__main__":
     test_r = np.arange(0.1, 30, step=0.1)
-    #massPlots(test_r)
-    velocityPlots(test_r)
+    massPlots(test_r)
+    #velocityPlots(test_r)
     
     
 
