@@ -4,12 +4,23 @@ from ReadFile import Read
 from CenterOfMass_Template import CenterOfMass
 from astropy.constants import G
 import matplotlib.pyplot as plt
-from scipy.integrate import quad
-from scipy.optimize import curve_fit
 
 
 class MassProfile:
     def __init__(self, galaxy, snap):
+        '''
+        This class allows for a galaxy to be represented based
+        on the provided simulation data. It is designed to compute
+        the mass and velocity profiles of the galaxy at a given snapshot
+        in time.
+        Parameters:
+            galaxy: (str) the name of the galaxy, should be the same name
+                    used for the filenames of the data. For ex, should be
+                    'MW' for the Milky Way, with data files 'MW_xxx.txt'
+            snap: (int) the SnapNumber, which determines what file will be
+                  chosen to collect data from. For exmaple, snapshot 0 for
+                  the Milky Way would be in the file 'MW_000.txt'
+        '''
         strSnapNum = "000" + str(snap)
         # remove all bu the last 3 digits
         strSnapNum = strSnapNum[-3:]
@@ -192,6 +203,12 @@ class MassProfile:
 
 
 def massPlots(test_r):
+    '''
+    A function to plot the mass profiles of the different components
+    of the galaxy.
+    Parameters:
+        test_r: (Array of floats) The array of radii to compute values at.
+    '''
     #Hernquist Scale Heights
     MWa = 63
     M31a = 60
@@ -261,6 +278,12 @@ def massPlots(test_r):
     plt.show()
 
 def velocityPlots(test_r):
+    '''
+    A function to plot the velocity profiles of different
+    galaxy components.
+    Parameters:
+        test_r: (array of floats) the radii to compute velocities at.
+    '''
     fig, ax = plt.subplots(1, 3, sharey=True, figsize = (14, 6))
 
     # Scale Heights
