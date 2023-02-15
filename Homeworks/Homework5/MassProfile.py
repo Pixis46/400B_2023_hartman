@@ -10,7 +10,7 @@ from scipy.optimize import curve_fit
 
 class MassProfile:
     def __init__(self, galaxy, snap):
-        strSnapNum = '000' + str(snap)
+        strSnapNum = "000" + str(snap)
         # remove all bu the last 3 digits
         strSnapNum = strSnapNum[-3:]
         self.filename = f"{galaxy}_{strSnapNum}.txt"
