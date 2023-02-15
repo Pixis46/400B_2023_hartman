@@ -143,6 +143,7 @@ class MassProfile:
                     r is a float, or an array of Astropy Quantities if the
                     input was an array of floats.
         '''
+        mass = (Mhalo*(r**2))/((a+r)**2)
         return
 
     def CircularVelocity(self, prtclType, r):
@@ -192,11 +193,12 @@ def massPlots(test_r):
     #Hernquist Scale Heights
     MWa = 63
     M31a = 60
-    M33a = 30
+    M33a = 26
 
     # MW
     MW = MassProfile("MW", 0)
     MWhaloProfile = MW.MassEnclosed(1, test_r)
+    print(MWhaloProfile)
     MWdiskProfile = MW.MassEnclosed(2, test_r)
     MWBulgeProfile = MW.MassEnclosed(3, test_r)
     MWtotProfile = MW.MassEnclosedTotal(test_r)
@@ -308,7 +310,7 @@ def velocityPlots(test_r):
     return
 
 if __name__ == "__main__":
-    test_r = np.arange(0.1, 30, step=0.1)
+    test_r = np.arange(0.25, 30.5, step=1.5)
     massPlots(test_r)
     #velocityPlots(test_r)
     
