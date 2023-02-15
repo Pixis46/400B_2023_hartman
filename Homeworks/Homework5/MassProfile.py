@@ -101,7 +101,7 @@ class MassProfile:
         totMass = Enclosed1 + Enclosed2 + Enclosed3
         return totMass
 
-    def HernquistMass(self, r, a, Mhalo): # TODO
+    def HernquistMass(self, r, a, Mhalo):
         '''
         Computes the mass enclosed within a given radius using a theoretical
         Hernquist Profile:
@@ -127,15 +127,16 @@ class MassProfile:
         # return integration[0]*u.Msun
         return M*u.Msun
     
-    def HernquistVCirc(self, r, a, Mhalo):# TODO
+    def HernquistVCirc(self, r, a, Mhalo):
         '''
         Computes the Circular Speed at a given radius using a Hernquist
         profile for the galaxy.
+        The velocity is determined by the Newtonian v = sqrt(GM/r)
         Parameters:
             r: (float or Array of floats) The radii to compute the
                circular speed at. Assumed to be in kpc
-            a: (float) The Hernquist scale height
-            Mhalo: (float) The dark matter halo mass of the galaxy
+            a: (float) The Hernquist scale height in kpc
+            Mhalo: (float) The dark matter halo mass of the galaxy in Msun
         Returns:
             speeds: (Astropy Quantity or Array of Astropy Quantities)
                     The circular speeds at the given radii in km/s.
@@ -143,8 +144,9 @@ class MassProfile:
                     r is a float, or an array of Astropy Quantities if the
                     input was an array of floats.
         '''
-        mass = (Mhalo*(r**2))/((a+r)**2)
-        return
+        mass = self.HernquistMass(r, a, Mhalo)
+        Grav = G.to(u.kpc*u.km**2/u.s**2/u.Msun)
+        return np.sqrt(Grav*mass/r)
 
     def CircularVelocity(self, prtclType, r):
         '''
@@ -198,7 +200,6 @@ def massPlots(test_r):
     # MW
     MW = MassProfile("MW", 0)
     MWhaloProfile = MW.MassEnclosed(1, test_r)
-    print(MWhaloProfile)
     MWdiskProfile = MW.MassEnclosed(2, test_r)
     MWBulgeProfile = MW.MassEnclosed(3, test_r)
     MWtotProfile = MW.MassEnclosedTotal(test_r)
@@ -261,58 +262,77 @@ def massPlots(test_r):
 
 def velocityPlots(test_r):
     fig, ax = plt.subplots(1, 3, sharey=True, figsize = (14, 6))
+
+    # Scale Heights
+    MWa = 63
+    M31a = 60
+    M33a = 26
+
     # MW
     MW = MassProfile("MW", 0)
     MWhaloProfile = MW.CircularVelocity(1, test_r)
     MWdiskProfile = MW.CircularVelocity(2, test_r)
     MWBulgeProfile = MW.CircularVelocity(3, test_r)
     MWtotProfile = MW.CircularVelocityTotal(test_r)
+
+    MWdarkMatterIndex = np.where(MW.data["type"] == 1)[0]
+    MWHernquist = np.array([MW.HernquistVCirc(radius, MWa, np.sum(MW.data["m"][MWdarkMatterIndex])*1e10).value for radius in test_r])*u.km/u.s
+    
     # M31
     M31 = MassProfile("M31", 0)
     M31haloProfile = M31.CircularVelocity(1, test_r)
     M31diskProfile = M31.CircularVelocity(2, test_r)
     M31BulgeProfile = M31.CircularVelocity(3, test_r)
     M31totProfile = M31.CircularVelocityTotal(test_r)
+
+    M31darkMatterIndex = np.where(M31.data["type"] == 1)[0]
+    M31Hernquist = np.array([M31.HernquistVCirc(radius, M31a, np.sum(M31.data["m"][M31darkMatterIndex])*1e10).value for radius in test_r])*u.km/u.s    
     # M33
     M33 = MassProfile("M33", 0)
     M33haloProfile = M33.CircularVelocity(1, test_r)
     M33diskProfile = M33.CircularVelocity(2, test_r)
     M33BulgeProfile = M33.CircularVelocity(3, test_r)
     M33totProfile = M33.CircularVelocityTotal(test_r)
+
+    M33darkMatterIndex = np.where(M33.data["type"] == 1)[0]
+    M33Hernquist = np.array([M33.HernquistVCirc(radius, M33a, np.sum(M33.data["m"][M33darkMatterIndex])*1e10).value for radius in test_r])*u.km/u.s
     # MW
-    ax[0].semilogy(test_r, MWtotProfile, color="k", label="Total")
-    ax[0].semilogy(test_r, MWhaloProfile, linestyle="dotted", color="magenta", label="Halo")
-    ax[0].semilogy(test_r, MWdiskProfile, linestyle="--", color="blue", label="Disk")
-    ax[0].semilogy(test_r, MWBulgeProfile, linestyle="dashdot", color="cyan", label="Bulge")
+    ax[0].plot(test_r, MWtotProfile, color="k", label="Total")
+    ax[0].plot(test_r, MWhaloProfile, linestyle="dotted", color="magenta", label="Halo")
+    ax[0].plot(test_r, MWdiskProfile, linestyle="--", color="blue", label="Disk")
+    ax[0].plot(test_r, MWBulgeProfile, linestyle="dashdot", color="cyan", label="Bulge")
+    ax[0].plot(test_r, MWHernquist, linestyle=(5, (10, 3)), color="green", label="Hernquist")
     # M31
-    ax[1].semilogy(test_r, M31totProfile, color="k", label="Total")
-    ax[1].semilogy(test_r, M31haloProfile, linestyle="dotted", color="magenta", label="Halo")
-    ax[1].semilogy(test_r, M31diskProfile, linestyle="--", color="blue", label="Disk")
-    ax[1].semilogy(test_r, M31BulgeProfile, linestyle="dashdot", color="cyan", label="Bulge")
+    ax[1].plot(test_r, M31totProfile, color="k", label="Total")
+    ax[1].plot(test_r, M31haloProfile, linestyle="dotted", color="magenta", label="Halo")
+    ax[1].plot(test_r, M31diskProfile, linestyle="--", color="blue", label="Disk")
+    ax[1].plot(test_r, M31BulgeProfile, linestyle="dashdot", color="cyan", label="Bulge")
+    ax[1].plot(test_r, M31Hernquist, linestyle=(5, (10, 3)), color="green", label="Hernquist")
     # M33
-    ax[2].semilogy(test_r, M33totProfile, color="k", label="Total")
-    ax[2].semilogy(test_r, M33haloProfile, linestyle="dotted", color="magenta", label="Halo")
-    ax[2].semilogy(test_r, M33diskProfile, linestyle="--", color="blue", label="Disk")
-    ax[2].semilogy(test_r, M33BulgeProfile, linestyle="dashdot", color="cyan", label="Bulge")
+    ax[2].plot(test_r, M33totProfile, color="k", label="Total")
+    ax[2].plot(test_r, M33haloProfile, linestyle="dotted", color="magenta", label="Halo")
+    ax[2].plot(test_r, M33diskProfile, linestyle="--", color="blue", label="Disk")
+    #ax[2].plot(test_r, M33BulgeProfile, linestyle="dashdot", color="cyan", label="Bulge") Don't plot bc it is 0
+    ax[2].plot(test_r, M33Hernquist, linestyle=(5, (10, 3)), color="green", label="Hernquist")
     # Plot labels
     ax[0].set_xlabel("r (kpc)")
     ax[1].set_xlabel("r (kpc)")
     ax[2].set_xlabel("r (kpc)")
-    ax[0].set_ylabel(r"$M_{enclosed}$ ($M_{\odot}$)")
-    ax[0].text(0.6, 0.93, "Milky Way", transform=ax[0].transAxes, size=14)
-    ax[1].text(0.8, 0.93, "M31", transform=ax[1].transAxes, size=14)
-    ax[2].text(0.8, 0.93, "M33", transform=ax[2].transAxes, size=14)
+    ax[0].set_ylabel(r"$V_{circ}$ ($km/s$)")
+    ax[0].text(0.2, 0.95, "Milky Way", transform=ax[0].transAxes, size=13)
+    ax[0].text(0.2, 0.9, f"a={MWa}", transform=ax[0].transAxes, size=11)
+    ax[1].text(0.22, 0.95, "M31", transform=ax[1].transAxes, size=13)
+    ax[1].text(0.22, 0.9, f"a={M31a}", transform=ax[1].transAxes, size=11)
+    ax[2].text(0.2, 0.95, "M33", transform=ax[2].transAxes, size=13)
+    ax[2].text(0.2, 0.9, f"a={M33a}", transform=ax[2].transAxes, size=11)
     fig.suptitle("Rotation Curves", size=18)
-    ax[2].legend(loc="lower right")
+    ax[2].legend(loc="upper right")
     plt.show()
 
-
-    return
-
 if __name__ == "__main__":
-    test_r = np.arange(0.25, 30.5, step=1.5)
-    massPlots(test_r)
-    #velocityPlots(test_r)
+    test_r = np.arange(0.1, 30.5, step=0.1)
+    #massPlots(test_r)
+    velocityPlots(test_r)
     
     
 
