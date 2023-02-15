@@ -5,7 +5,6 @@ from CenterOfMass_Template import CenterOfMass
 from astropy.constants import G
 import matplotlib.pyplot as plt
 
-
 class MassProfile:
     def __init__(self, galaxy, snap):
         '''
@@ -201,7 +200,6 @@ class MassProfile:
         # newtonian gravity is assumed so mv^2/r = GMm/r^2 -> v^2 = GM/r
         return np.sqrt(Grav*M/r)
 
-
 def massPlots(test_r):
     '''
     A function to plot the mass profiles of the different components
@@ -356,6 +354,3 @@ if __name__ == "__main__":
     test_r = np.arange(0.1, 30.5, step=0.1)
     #massPlots(test_r)
     velocityPlots(test_r)
-    
-    
-
