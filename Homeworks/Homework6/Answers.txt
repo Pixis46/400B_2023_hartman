@@ -1,0 +1,12 @@
+1) 3, from the three minima in the position
+   separation
+2) The velocity difference peaks when the position
+   difference is minimized.
+3) The merger occurs at ~6.1 Gyr, and M33's orbit
+   begins to stabilize, keeping a roughly constant
+   position pattern and a roughly constant velocity
+   pattern, though it is shrinking slowly over time.
+4) The decay rate seems to be ~1 kpc/Gyr, so M33 would
+   take 75 Gyr to merge with the merged Milky Way-M31 galaxy
+   (Milkdromeda?, The Andromeda Way?) That's a really long
+   time!
