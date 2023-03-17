@@ -12,40 +12,35 @@
 \affiliation{University of Arizona}
 
 \section{Introduction} \label{sec:intro}
-I propose to study the topic of the dark matter halo evolution of the M31/Milky Way Merger remnant, and particularly the density profile and kinematics of the dark matter halo.
+I propose to study the topic of the dark matter halo evolution of the M31/Milky Way Merger remnant, and particularly the density profile of the dark matter halo.
 
 Due to dark matter's purely gravitational interaction with baryons, its density profile is the most important component of dark matter's effect on galaxy evolution. The density profile of the halo is critical for the baryonic matter within the halo, as it determines the rotation rate of the galaxy and provides much of the mass to bind it. As such, the galactic structures we see heavily depend on the dark matter halo that they are embedded in.
 
-While it is commonly understood that halos are well-fit by an NFW profile, there are still open questions about the halos, especially how they change. Questions of how the halo reacts to baryonic matter and how galaxy mergers alter the distribution of dark matter remain. Furthermore, there are still open questions on how the specific kinematics of dark matter halos affect merger remnants.
+While dark matter halos have a surprisingly universal spherically-averaged density profile, the triaxial nature of dark matter halos are important to consider. \cite{Meneghetti} determined that triaxial halos are necessary to match with CDM modeling, and the halo shape has an effect on stellar streams and nearby satellites due to the alteration of the potential.
 
-\cite{Abadi} showed that the dark matter halo reacts and changes shape due to the baryonic matter it influences. Inside of stellar mergers, these effects become very important, as a large amount of baryonic matter is interacting with both halos, affecting their density profiles.
+There remains an open question regarding the effect produced by mergers on dark matter halos and how the density profile and shape changes with mergers.
 
-\cite{DrakosA} found that the energy and spin parameters of the merging halos affect the remnant's halo distribution, with the spin parameter of the halo scaling linearly with the $c/b$ axis ratio and the energy parameter scaling with the $c/a$. The energy parameter also shows a relationship with the size of the resulting halo, as seen in Figure \ref{fig:1}. These factors provide a strong relationship between halo kinematics and the merger remnant halo properties.
+\cite{Abadi} showed that the dark matter halo reacts and changes shape due to the baryonic matter it influences. Inside of stellar mergers, these effects become very important, as a large amount of baryonic matter is interacting with both halos, affecting their density profiles. \cite{Despali} determined that halos will become elongated along the merger axis, and then smooth out to a spherical shape over time. I hope to determine the effect induced by a merger on halo shape and distribution by building figures similar to those of Figure \ref{fig:1}.
+
 
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=\textwidth]{Drakos2019bFig7.jpg}
-    \caption{(Left)The relationship between initial and final gravitational radius and the energy parameter $\kappa$. (Center) The relationship between initial and final half-mass radius and $\kappa$. (Right) The relationship between the gravitational radius and the half-mass radius. Each color corresponds to different types of halo profiles. We will not be testing these factors. Figure from \cite{DrakosB}}
+    \includegraphics[width=\textwidth]{DrakosFig.jpg}
+    \caption{A plot of isodensity contours on a dark matter halo after a merger. I hope to reproduce this type of figure to test changes in the dark matter halo profile and shape. The red dashed lines indicate the measured shape ratio, while the white contours show the expected shape. Figure from \cite{DrakosA}}
     \label{fig:1}
 \end{figure}
-\newpage
 \section{Proposal}
 
-I will be addressing two questions. First, I will be studying the final dark matter density distribution after the merger. Second, I will be studying the kinematics of the halo after the merger. Both of these questions will rely on studying the difference between the initial and final conditions. In both cases, I will need to write new codes to find the energy and spin parameters in both states, as well as to determine if the Virial Theorem holds at different timesteps. The very general process is shown in \ref{fig:2}.
-\subsection{Density Distribution}
-I will be addressing the density profile by utilizing codes we have used in class already to collect information on the system as the merger continues and compare the initial density distribution of each galaxy's halo and the final merger halo. I will use our code from homework 6 to determine the time the merger completes, then write code to compare the initial halos and the final remnant halo. The primary parameter to compare here is the density distribution as a function of radius in each of the 3 spatial directions to determine the way the profile changes.
+I will be addressing the question of how the density distribution changes after the merger. 
 
-I expect that the remnant halo will be more massive and no longer spherically symmetric due to the merger. This is due to the relationship between the energy and spin parameters and final halo shape seen by \cite{DrakosB}. This means that it will no longer be well-fit by a Hernquist profile.
+This will be done with a combination of old and new codes. The initial conditions are given in the simulation data, following a Hernquist profile. I will use the final timestep in simulation at SnapNumber 800 to determine the final state after the merger remnant has relaxed. The new code will be written to determine the shape of the halo, by creating isodensity contours for the halo in the xy, yz, and xz planes. I will then fit those contours with ellipses and determine the a, b, and c axes in both the initial and final states. A triaxial halo will have different values of a, b, and c, and the spherical profiles will have equal a, b, and c.
 
-\subsection{Halo Kinematics}
-I will be studying the kinematics of the merger by writing code to analyze the way kinematic motion changes between the initial and final halos. I will compare the motions of each galaxy halo relative to their center of the mass. I will write code to compute the dispersion of each galaxy given the simulation data, and determine if the virial theorem gives the right mass using another new code.
-
-I expect that the merger remnant halo dispersion will depend on the spatial position asymmetrically (i.e. $\sigma_x \neq \sigma_y \neq \sigma_z$), as the halo will no longer be spherically symmetric. I expect the virial theorem to not provide the correct mass until a significant time after the galaxies merge, but to become correct as the system relaxes with time.
+I expect the initial halos to be a spherical shape, as they are set up in simulation based on a Hernquist profile. I expect the final halo to still follow a Hernquist profile when spherically averaged, but to be elongated along the merger axis, as the interaction between M31's halo and the Milky Way's halo stretches the combined distribution.
 
 \begin{figure}[h]
     \centering
-    \includegraphics{MethodsFlowchart400B.png}
-    \caption{A general overview of my process for analysis. The black borders indicate steps that will not require new codes, the red borders indicate the steps that will require new codes, and the green border indicates the step that will be the bulk of the analyzing of the data.}
+    \includegraphics[width=\textwidth]{MethodsFlowchart400B.png}
+    \caption{A general overview of my process for analysis. The purple borders indicate inputs, the green borders indicate broad analysis, and each bubble shows the goal in a black square and the necessary steps to follow in circles. New codes will be needed for the red circles and black circles indicate steps that can be done with existing codes.}
     \label{fig:2}
 \end{figure}
 
