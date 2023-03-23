@@ -1,0 +1,11 @@
+1) See HW7Figures
+2) The plots are similar at early times, but diverge
+   significantly as the time gets larger
+3) The missing physics could be the lack of the Milky Way's
+   gravitational presence, as well as the affects of tidal
+   interactions.
+4) I would include the MW by performing similar computations
+   to the M31 potential to get the MW potential using the relative
+   distance from the MW to M33. Then it is the same process to
+   compute the acceleration induced by the MW. Then add that to the
+   acceleration with M31.

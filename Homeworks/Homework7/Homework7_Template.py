@@ -1,4 +1,3 @@
-
 # # Homework 7 Template
 # 
 # Rixin Li & G . Besla
@@ -45,17 +44,19 @@ class M33AnalyticOrbit:
         # **** create an instance of the  CenterOfMass class for M33 
         M33COM = CenterOfMass("M33_000.txt", 2)
         # **** store the position VECTOR of the M33 COM (.value to get rid of units)
-        M33_Pos = M33COM.COM_P().value
+        M33_Pos = M33COM.COM_P()
         # **** store the velocity VECTOR of the M33 COM (.value to get rid of units)
-        M33_v = M33COM.COM_V().value
+        M33_v = M33COM.COM_V(M33_Pos[0], M33_Pos[1], M33_Pos[2]).value
+        M33_Pos = M33_Pos.value
         
         ### get the current pos/vel of M31 
         # **** create an instance of the  CenterOfMass class for M31 
         M31COM = CenterOfMass("M31_000.txt", 2)
         # **** store the position VECTOR of the M31 COM (.value to get rid of units)
-        M31_Pos = M31COM.COM_P().value
+        M31_Pos = M31COM.COM_P()
         # **** store the velocity VECTOR of the M31 COM (.value to get rid of units)
-        M31_v = M31COM.COM_V().value
+        M31_v = M31COM.COM_V(M31_Pos[0], M31_Pos[1], M31_Pos[2]).value
+        M31_Pos = M31_Pos.value
         
         ### store the DIFFERENCE between the vectors posM33 - posM31
         # **** create two VECTORs self.r0 and self.v0 and have them be the
@@ -79,8 +80,6 @@ class M33AnalyticOrbit:
         # **** self.Mhalo set with ComponentMass function. Remember to *1e12 to get the right units. Use the right ptype
         self.Mhalo = ComponentMass("M31_000.txt", 1)*1e12
      
-    
-    
     def HernquistAccel(self, M, r_a, r): # it is easiest if you take as an input the position VECTOR 
         """
         A function to compute the gravitational acceleration induced
@@ -106,8 +105,6 @@ class M33AnalyticOrbit:
         # use  -G*M/(rmag *(ra + rmag)**2) * r --> where the last r is a VECTOR 
         
         return Hern
-    
-    
     
     def MiyamotoNagaiAccel(self, M, r_d, r):# it is easiest if you take as an input a position VECTOR  r 
         """
@@ -140,7 +137,6 @@ class M33AnalyticOrbit:
         return a
         # the np.array allows for a different value for the z component of the acceleration
      
-    
     def M31Accel(self, r): # input should include the position vector, r
         """
         Function to determine the total acceleration from M31
@@ -180,7 +176,7 @@ class M33AnalyticOrbit:
         # predict the position at the next half timestep
         rhalf = r + v*(dt/2)
         
-        ahalf = self.M31Accel(rhalf)
+        ahalf = self.M31Accel(rhalf).value
         # predict the final velocity at the next timestep using the acceleration field at the rhalf position 
         vnew = v + ahalf*dt
         
@@ -230,7 +226,7 @@ class M33AnalyticOrbit:
             # remember that LeapFrog returns a position vector and a velocity vector  
             # as an example, if a function returns three vectors you would call the function and store 
             # the variable like:     a,b,c = function(input)
-            rnew, vnew = self.LeapFrog(dt, orbit[i-1, 1], orbit[i-1, 2])
+            rnew, vnew = self.LeapFrog(dt, np.array([orbit[i-1, 1], orbit[i-1, 2], orbit[i-1, 3]]), np.array([orbit[i-1, 4], orbit[i-1, 5], orbit[i-1, 6]]))
          
     
             # ****  store the new position vector into the columns with indexes 1,2,3 of the ith row of orbit
@@ -239,7 +235,7 @@ class M33AnalyticOrbit:
             # where the syntax is row n, start at column 5 and end BEFORE column 8
             # ****  store the new position vector into the columns with indexes 1,2,3 of the ith row of orbit
             orbit[i, 1:4] = rnew[0], rnew[1], rnew[2]
-            orbit[i, 5:8] = vnew[0], vnew[1], vnew[2]
+            orbit[i, 4:7] = vnew[0], vnew[1], vnew[2]
             # **** update counter i , where i is keeping track of the number of rows (i.e. the number of time steps)
             i += 1
         

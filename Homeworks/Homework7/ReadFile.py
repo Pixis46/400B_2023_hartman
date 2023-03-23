@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 import numpy as np
 from astropy import units as u
+import os
 def Read(filename):
     '''
     The Read function reads in a file with assumed format as follows:
@@ -18,6 +19,7 @@ def Read(filename):
               is given the name listed on the associated column header line in
               the file
     '''
+    filename = os.path.abspath(filename)
     with open(filename, "r") as f: #Don't want to forget to close files
         label, value = f.readline().split() # get first line, split to get label and time
         time = float(value)*u.Myr # ensure time is proper type and units
