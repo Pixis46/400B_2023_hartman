@@ -1,8 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from ReadFile import Read
 from CenterOfMass_Template import CenterOfMass
 from MassProfile import MassProfile
+from scipy.optimize import curve_fit
 
 # This program will be used to spherically average mass of the MW-M31 Merger Remnant
 # and fit hernquist profiles to resulting dark matter halos from the final snapshot of data
@@ -20,7 +20,7 @@ def sphericalAvg(data, radius, step=0.1): # TODO
         Mass: (float) The Mass at the given radius in Msun
     '''
 
-def fitHernquist(): # TODO
+def fitHernquist(data): # TODO
     '''
     Determines how well-fit to a Hernquist Profile the given data is.
 
@@ -28,9 +28,10 @@ def fitHernquist(): # TODO
         data: (array) The density data to compare to a Hernquist Profile
     Returns:
         HernMass: (array) The best-fit Hernquist Profile
-        a: (float) The Hernquit scale radius in kpc
+        a: (float) The best-fit Hernquit scale radius in kpc
         res: (array) The fit residuals
     '''
+    hernfunc = MassProfile.HernquistMass
 
 
 # Collect Data
