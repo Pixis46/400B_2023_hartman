@@ -4,8 +4,8 @@ from ReadFile import Read
 from CenterOfMass_Template import CenterOfMass
 from MassProfile import MassProfile
 
-# This program will be used to spherically average and fit hernquist profiles to the
-# dark matter halos from the final snapshot of data
+# This program will be used to spherically average mass of the MW-M31 Merger Remnant
+# and fit hernquist profiles to resulting dark matter halos from the final snapshot of data
 
 def sphericalAvg(data, radius, step=0.1): # TODO
     '''

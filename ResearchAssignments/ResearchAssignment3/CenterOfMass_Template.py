@@ -51,7 +51,6 @@ class CenterOfMass:
         self.vy = self.data['vy'][self.index]
         self.vz = self.data['vz'][self.index]
 
-
     def COMdefine(self,a,b,c,m):
         ''' Method to compute the COM of a generic vector quantity by direct weighted averaging.
 
