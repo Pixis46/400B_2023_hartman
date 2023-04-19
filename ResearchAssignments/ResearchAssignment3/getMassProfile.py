@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from CenterOfMass import CenterOfMass
+from CenterOfMass_Template import CenterOfMass
 from MassProfile import MassProfile
 from scipy.optimize import curve_fit
 import matplotlib.pyplot as plt
@@ -31,36 +31,40 @@ def sphericalAvg(data, COM, radius, step=0.1):
         rVals.append(sepfromCOM)
     rVals = np.array(rVals)
 
-    density = []
+    mass = []
     for r in radius:
-        sliceMin = r
         sliceMax = r + step
-        shellIndex = np.where((rVals > sliceMin) & (rVals < sliceMax))[0]
+        shellIndex = np.where((rVals < sliceMax))[0]
         shellMass = np.sum(data[3][shellIndex])
-        print(f"SliceMin: {r}\nSliceMax: {r + step}\nSlice")
-        shellVol = (4/3)*np.pi*(sliceMax**3 - sliceMin**3)
-        density.append(shellMass / (shellVol))
-    return density
+        #print(f"SliceMin: {r}\nSliceMax: {r + step}\nIndex: {shellIndex}\nSliceMass: {shellMass}")
+        mass.append(shellMass)
+    return mass
 
-def fitHernquist(data): # TODO
+def fitHernquist(toFit, radii, Mhalo): # TODO
     '''
     Determines how well-fit to a Hernquist Profile the given data is.
 
     Parameters:
-        data: (array) The density data to compare to a Hernquist Profile
+        toFit: (array) The Mass data to compare to a Hernquist Profile
+        radii: (array) The radii that the toFit data were collected at
+        Mhalo: (float) total halo mass in the galaxy
     Returns:
         HernMass: (array) The best-fit Hernquist Profile
         a: (float) The best-fit Hernquit scale radius in kpc
         res: (array) The fit residuals
     '''
-    hernfunc = MassProfile.HernquistMass
+    hernfunc = lambda r, a: MassProfile.HernquistMass(r, a, Mhalo=Mhalo)
+    popt, pcov, extra = curve_fit(hernfunc, radii, toFit) # extra is the remaining returns that will be unused
+    print(popt, pcov)
+    return MassProfile.HernquistMass(radii, popt[0], Mhalo), popt, pcov
 
 combCM = CenterOfMass(os.path.abspath("./MWM31_800.txt"), 1) # The DM halo of the combined system
-COM = combCM.COM_P()
-positions = np.array([combCM.x, combCM.y, combCM.z, combCM.m])
-densityProf = []
-radii = np.arange(0, 30.5, 0.1)
-densityProf = sphericalAvg(positions, COM, radii)
-densityProf = np.array(densityProf)
-print(densityProf)
-plt.plot(radii, densityProf)
+COM = combCM.COM_P(delta = 0.13)
+positions = np.array([combCM.x, combCM.y, combCM.z, 1e10*combCM.m])
+radii = np.arange(0, 40, 0.1)
+massProf = sphericalAvg(positions, COM, radii)
+
+Mhalo = np.sum(combCM.m)*1e10 # Msun
+hernFit = fitHernquist(massProf, radii, Mhalo)
+plt.semilogy(radii, massProf, color="turquoise")
+plt.semilogy(radii, hernFit, color="g", ls="--")

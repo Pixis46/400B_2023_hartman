@@ -132,9 +132,6 @@ class MassProfile:
                        in Solar Masses.
         '''
         M = (Mhalo*(r**2))/((a+r)**2)# Hernquist M
-        # density = lambda r: (M*a)/(2*np.pi*r*((r+a)**3)) #Hernquist Density
-        # integration = quad(density, 0.000001, r)
-        # return integration[0]*u.Msun
         return M*u.Msun
     
     def HernquistVCirc(self, r, a, Mhalo):
